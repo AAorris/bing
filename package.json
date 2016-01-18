@@ -1,0 +1,15 @@
+{
+  "name": "node-bing",
+  "version": "0.0.1",
+  "description": "Node bing api queries",
+  "main": "query.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node query.js"
+  },
+  "author": "Aaron Morris; AAorris@live.com",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.67.0"
+  }
+}
