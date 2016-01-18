@@ -8,7 +8,6 @@ request = require('request');
   var api_auth, api_key, callback, options, query_string, raw_query, service;
   api_key = process.env.BING_ACCOUNT_KEY;
   api_auth = new Buffer(api_key + ":" + api_key).toString('base64');
-  console.log(api_auth);
   service = process.argv[2];
   raw_query = process.argv[3].replace("%20", " ");
   query_string = querystring.escape("" + raw_query);
@@ -25,11 +24,18 @@ request = require('request');
     }
   };
   callback = function(error, response, body) {
+    var i, len, ref, result, results, search;
     if (error) {
       return console.log(error);
     } else if (response.statusCode === 200) {
-      console.log(body);
-      return console.log(JSON.parse(body));
+      search = JSON.parse(body);
+      ref = search.d.results;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        result = ref[i];
+        results.push(process.stdout.write("[" + result.Title + "](" + result.DisplayUrl + ")  \n" + result.Description + "\n\n"));
+      }
+      return results;
     } else {
       console.log(error);
       return console.log(body);

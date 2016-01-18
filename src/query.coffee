@@ -4,7 +4,6 @@ request = require 'request'
 do->
   api_key = process.env.BING_ACCOUNT_KEY
   api_auth = new Buffer("#{api_key}:#{api_key}").toString 'base64'
-  console.log api_auth
 
   service = process.argv[2]
   raw_query = process.argv[3].replace("%20", " ")
@@ -24,8 +23,9 @@ do->
     if error
       console.log error
     else if response.statusCode is 200
-      console.log body
-      console.log JSON.parse(body)
+      search = JSON.parse body
+      for result in search.d.results
+        process.stdout.write "[#{result.Title}](#{result.DisplayUrl})  \n#{result.Description}\n\n"
     else
       console.log error
       console.log body
