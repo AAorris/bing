@@ -1,12 +1,17 @@
-var querystring, request;
+var fs, querystring, request;
 
 querystring = require('querystring');
 
 request = require('request');
 
+fs = require('fs');
+
 (function() {
   var api_auth, api_key, callback, options, query_string, raw_query, service;
   api_key = process.env.BING_ACCOUNT_KEY;
+  if (api_key == null) {
+    console.log("Error, BING_ACCOUNT_KEY is not set!");
+  }
   api_auth = new Buffer(api_key + ":" + api_key).toString('base64');
   service = process.argv[2];
   raw_query = process.argv[3].replace("%20", " ");
@@ -41,5 +46,9 @@ request = require('request');
       return console.log(body);
     }
   };
-  return request(options, callback);
+  if (api_key) {
+    return request(options, callback).on('response', function(response) {
+      return fs.writeFile('bing-headers.json', JSON.stringify(response.headers, null, 2));
+    }).pipe(fs.createWriteStream('bing-response.json'));
+  }
 })();

@@ -1,8 +1,11 @@
 querystring = require 'querystring'
 request = require 'request'
+fs = require 'fs'
 
 do->
   api_key = process.env.BING_ACCOUNT_KEY
+  if !api_key?
+    console.log "Error, BING_ACCOUNT_KEY is not set!"
   api_auth = new Buffer("#{api_key}:#{api_key}").toString 'base64'
 
   service = process.argv[2]
@@ -32,4 +35,8 @@ do->
 
   # console.log options
   # console.log process.argv
-  request options, callback
+  if api_key
+    request options, callback
+      .on 'response', (response)->
+        fs.writeFile 'bing-headers.json', JSON.stringify response.headers, null, 2
+      .pipe fs.createWriteStream 'bing-response.json'
